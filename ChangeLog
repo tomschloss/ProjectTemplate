@@ -1,23 +1,49 @@
+2014-03-05	Kirill Müller  <mail@kirill-mueller.de>, Kenton White  <jkentonwhite@gmail.com>
+
+* 0.5
+* Use require.package() instead of library() (#26).
+* Export existing translate.dcf function, useful for implementing custom readers (#59).
+* Add new function .add.extension. This allows users to create custom readers for extensions, either locally in a project or as packages (#59).
+* Internal: Fix CRAN warnings concerning use of ProjectTemplate::: qualification
+  (#56).
+* project.info is now deprecated in favor of the new function get.project().
+  Accessing project.info will work but emit a deprecation warning once per
+  session (#39).
+* Updated author information in DESCRIPTION file (#40).
+* Internal: Store templates for empty projects in tar files instead of storing
+  the entire directory structure per CRAN request and to avoid having to build
+  with the --keep-empty-dirs switch (#41).
+
+2014-02-11	Kirill Müller  <mail@kirill-mueller.de>, Kenton White  <jkentonwhite@gmail.com>
+
+* 0.4-5
 * Allow string interpolation of R functions in sql queries
-* Added a JDBC database wrapper for accessing PostgreSQL databases hosted by Heroku
+* Added a JDBC database wrapper for accessing PostgreSQL databases hosted by Heroku (#20)
 * JDBC connection can now use path to jar stored in CLASSPATH
 * project.info is stored in the global environment again (reverted change from
   0.4-4); the active binding seemed to work for the tests but not from outside
   the package
 * create.project now works if the directory exists. Merging with a non-empty
-  directory is supported when the new parameter merge.existing is set to TRUE.
+  directory is supported by setting the new parameter merge.strategy.
 
 2013-08-11	John Myles White  <jmw@johnmyleswhite.com>
 
 * v0.4-4
-* Fix CRAN checks.
-* project.info is now an active binding to avoid writing to the global environment.
-* Reenabled xlsx.reader.
+* Fix CRAN checks (@krlmlr).
+* project.info is now an active binding to avoid writing to the global
+  environment (@krlmlr).
+* Reenabled xlsx.reader (@krlmlr).
+* Added JDBC support to sql.reader (@joshbode, #12).
+* Various MySQL improvements (@cortex, #10).
+* Fix "Argument port must be an integer value" when using port number for mysql
+  driver (@cortex, #7).
+* Tentative CSV2 support.
 
 2012-08-11	John Myles White  <jmw@johnmyleswhite.com>
 
 * v0.4-3
 * Added optional recursive data directory loading using a 'recursive_loading' setting.
+* Added basic Oracle support (with tnsnames, no host/port) (@matteoredaelli, #6).
 
 2012-05-12	John Myles White  <jmw@johnmyleswhite.com>
 

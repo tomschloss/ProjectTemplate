@@ -7,9 +7,9 @@
 #' a data set.
 #'
 #' queries can support string interpolation to execute code snippets. This is used
-#' to create queries that depend on data from other sources. Code delimited is @@{...}
+#' to create queries that depend on data from other sources. Code delimited is @@\{...\}
 #'
-#' Example: query: SELECT * FROM my_table WHERE id IN (@@{paste(ids, collapse = ',')}).
+#' Example: query: SELECT * FROM my_table WHERE id IN (@@\{paste(ids, collapse = ',')\}).
 #' Here ids is data previously loaded into ProjectTemplate
 #'
 #' Examples of the DCF format and settings used in a .sql file are shown
@@ -104,12 +104,12 @@
 #' @include require.package.R
 sql.reader <- function(data.file, filename, variable.name)
 {
-  database.info <- ProjectTemplate:::translate.dcf(filename)
+  database.info <- translate.dcf(filename)
 
   if (! is.null(database.info[['connection']]))
   {
     connection_filename <- paste("data/", database.info[['connection']],".sql-connection", sep="")
-    connection.info <- ProjectTemplate:::translate.dcf(connection_filename)
+    connection.info <- translate.dcf(connection_filename)
 
     # Allow .sql to override options defined in .connection
     database.info <- modifyList(connection.info, database.info) 
@@ -127,7 +127,8 @@ sql.reader <- function(data.file, filename, variable.name)
   # Draft code for ODBC support.
   if (database.info[['type']] == 'odbc')
   {
-    library('RODBC')
+    require.package('RODBC')
+
     connection.string <- paste('DSN=', database.info[['dsn']], ';',
                                'UID=', database.info[['user']], ';',
                                'PWD=', database.info[['password']], ';',
@@ -144,7 +145,8 @@ sql.reader <- function(data.file, filename, variable.name)
   
   if (database.info[['type']] == 'mysql')
   {
-    library('RMySQL')
+    require.package('RMySQL')
+
     mysql.driver <- dbDriver("MySQL")
     
     # Default value for 'port' in mysqlNewConnection is 0.
@@ -165,7 +167,8 @@ sql.reader <- function(data.file, filename, variable.name)
 
   if (database.info[['type']] == 'sqlite')
   {
-    library('RSQLite')
+    require.package('RSQLite')
+
     sqlite.driver <- dbDriver("SQLite")
 
     connection <- dbConnect(sqlite.driver,
@@ -174,7 +177,8 @@ sql.reader <- function(data.file, filename, variable.name)
 
   if (database.info[['type']] == 'postgres')
   {
-    library('RPostgreSQL')
+    require.package('RPostgreSQL')
+
     pgsql.driver <- dbDriver("PostgreSQL")
 
     args <- intersect(names(database.info), c('user', 'password', 'host', 'dbname'))
@@ -183,7 +187,8 @@ sql.reader <- function(data.file, filename, variable.name)
 
   if (database.info[['type']] == 'oracle')
   {
-    library('RMySQL')
+    require.package('RMySQL')
+
     oracle.driver <- dbDriver("Oracle")
     
     # Default value for 'port' in mysqlNewConnection is 0.
@@ -200,7 +205,7 @@ sql.reader <- function(data.file, filename, variable.name)
 
   if (database.info[['type']] == 'jdbc')
   {
-    library('RJDBC')
+    require.package('RJDBC')
 
     ident.quote <- NA
     if('identquote' %in% names(database.info))
@@ -219,7 +224,7 @@ sql.reader <- function(data.file, filename, variable.name)
 
   if (database.info[['type']] == 'heroku')
   {
-    library('RJDBC')
+    require.package('RJDBC')
     
     if(is.null(database.info[['classpath']])) {
       database.info[['classpath']] <- ''
@@ -271,7 +276,7 @@ sql.reader <- function(data.file, filename, variable.name)
                                  table,
                                  row.names = NULL)
     
-      assign(ProjectTemplate:::clean.variable.name(table),
+      assign(clean.variable.name(table),
              data.parcel,
              envir = .GlobalEnv)
     }

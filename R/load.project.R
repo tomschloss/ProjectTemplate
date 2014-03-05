@@ -7,6 +7,9 @@
 #'
 #' @export
 #'
+#' @seealso \code{\link{create.project}}, \code{\link{get.project}},
+#'   \code{\link{cache.project}}, \code{\link{show.project}}
+#'   
 #' @examples
 #' library('ProjectTemplate')
 #'
@@ -20,7 +23,7 @@ load.project <- function()
   {
     stop('You are missing a configuration file: config/global.dcf')
   }
-  config <- ProjectTemplate:::translate.dcf(file.path('config', 'global.dcf'))
+  config <- translate.dcf(file.path('config', 'global.dcf'))
   if (is.null(config[['libraries']]))
   {
     warning('Your configuration file is missing an entry: libraries')
@@ -106,11 +109,11 @@ load.project <- function()
     {
       filename <- file.path('cache', cache.file)
       
-      for (extension in names(ProjectTemplate:::extensions.dispatch.table))
+      for (extension in names(extensions.dispatch.table))
       {
         if (grepl(extension, cache.file, ignore.case = TRUE, perl = TRUE))
         {
-          variable.name <- ProjectTemplate:::clean.variable.name(sub(extension,
+          variable.name <- clean.variable.name(sub(extension,
                                                    '',
                                                    cache.file,
                                                    ignore.case = TRUE,
@@ -124,7 +127,7 @@ load.project <- function()
           
           message(paste(" Loading cached data set: ", variable.name, sep = ''))
 
-          do.call(ProjectTemplate:::extensions.dispatch.table[[extension]],
+          do.call(extensions.dispatch.table[[extension]],
                   list(cache.file,
                        filename,
                        variable.name))
@@ -153,11 +156,11 @@ load.project <- function()
     {
       filename <- file.path('cache', cache.file)
       
-      for (extension in names(ProjectTemplate:::extensions.dispatch.table))
+      for (extension in names(extensions.dispatch.table))
       {
         if (grepl(extension, cache.file, ignore.case = TRUE, perl = TRUE))
         {
-          variable.name <- ProjectTemplate:::clean.variable.name(sub(extension,
+          variable.name <- clean.variable.name(sub(extension,
                                                    '',
                                                    cache.file,
                                                    ignore.case = TRUE,
@@ -171,7 +174,7 @@ load.project <- function()
           
           message(paste(" Loading cached data set: ", variable.name, sep = ''))
 
-          do.call(ProjectTemplate:::extensions.dispatch.table[[extension]],
+          do.call(extensions.dispatch.table[[extension]],
                   list(cache.file,
                        filename,
                        variable.name))
@@ -210,11 +213,11 @@ load.project <- function()
     {
       filename <- file.path('data', data.file)
       
-      for (extension in names(ProjectTemplate:::extensions.dispatch.table))
+      for (extension in names(extensions.dispatch.table))
       {
         if (grepl(extension, data.file, ignore.case = TRUE, perl = TRUE))
         {
-          variable.name <- ProjectTemplate:::clean.variable.name(sub(extension,
+          variable.name <- clean.variable.name(sub(extension,
                                                    '',
                                                    data.file,
                                                    ignore.case = TRUE,
@@ -228,7 +231,7 @@ load.project <- function()
 
           message(paste(" Loading data set: ", variable.name, sep = ''))
 
-          do.call(ProjectTemplate:::extensions.dispatch.table[[extension]],
+          do.call(extensions.dispatch.table[[extension]],
                   list(data.file,
                        filename,
                        variable.name))
@@ -243,7 +246,7 @@ load.project <- function()
 
   if (! is.null(config[['data_tables']]) && config[['data_tables']] == 'on')
   {
-    library('data.table')
+    require.package('data.table')
     
     for (data.set in my.project.info[['data']])
     {
@@ -283,7 +286,8 @@ load.project <- function()
   if (config[['logging']] == 'on')
   {
     message('Initializing logger')
-    library('log4r')
+    require.package('log4r')
+
     logger <- create.logger()
     if (!file.exists('logs'))
     {
@@ -294,7 +298,23 @@ load.project <- function()
     assign('logger', logger, envir = .GlobalEnv)
   }
 
-  assign('project.info', my.project.info, envir = .GlobalEnv)
-  #assign('project.info', my.project.info, envir = parent.frame())
-  #assign('project.info', my.project.info, envir = environment(ProjectTemplate:::create.project))
+  assign('project.info', my.project.info, envir = .private.env)
+
+  suppressWarnings(rm('project.info', envir = .GlobalEnv))
+
+  makeActiveBinding(
+    sym = 'project.info',
+    fun = function(x) {
+      if (missing(x)) {
+        if (!exists('project.info.warn', envir = .private.env)) {
+          warning("project.info is deprecated, use get.project() instead.")
+          assign('project.info.warn', TRUE, envir = .private.env)
+        }
+        get.project()
+      } else {
+        stop("Changing project.info is not supported.")
+      }
+    },
+    env = .GlobalEnv
+  )
 }
