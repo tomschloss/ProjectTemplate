@@ -28,7 +28,10 @@
 #'
 #' @details  If the target directory does not exist, it is created.  Otherwise,
 #'   it can only contain files and directories allowed by the merge strategy.
-#'
+#'   
+#' @seealso \code{\link{load.project}}, \code{\link{get.project}},
+#'   \code{\link{cache.project}}, \code{\link{show.project}}
+#' 
 #' @export
 #'
 #' @examples
@@ -57,7 +60,7 @@ create.project <- function(project.name = 'new-project', minimal = FALSE,
 
     # For time being, just copy the entire contents of defaults/* and then also copy the collated R source.
     # Seriously broken at the moment.
-    e <- environment(ProjectTemplate:::load.project)
+    e <- environment(load.project)
     
     pt.contents <- ls(e)
     
