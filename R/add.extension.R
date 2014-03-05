@@ -2,6 +2,8 @@
 #'
 #' This function will associate an extension with a custom reader function.
 #'
+#' @name add.extension
+#' @aliases .add.extension
 #' @param extension The extension of the new data file.
 #' @param reader The function to user when reading the data file.
 #'
@@ -12,7 +14,6 @@
 #' @examples
 #' \dontrun{.add.extension('foo', foo.reader)}
 #' @include extensions.dispatch.table.R
-
 .add.extension <- function(extension, reader) {
 	key <- paste('\\.', extension, '$', sep='')
 	extensions.dispatch.table[[key]] <- reader
