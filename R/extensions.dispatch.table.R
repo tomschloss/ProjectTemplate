@@ -7,7 +7,6 @@
 #'
 #' @include arff.reader.R
 #' @include csv.reader.R
-#' @include csv2.reader.R
 #' @include db.reader.R
 #' @include dbf.reader.R
 #' @include epiinfo.reader.R
