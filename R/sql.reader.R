@@ -120,7 +120,7 @@ sql.reader <- function(data.file, filename, variable.name)
     warning('Only databases reachable through RMySQL, RSQLite, RODBC ROracle or RPostgreSQL are currently supported.')
     assign(variable.name,
            NULL,
-           envir = .GlobalEnv)
+           envir = .TargetEnv)
     return()
   }
 
@@ -139,7 +139,7 @@ sql.reader <- function(data.file, filename, variable.name)
     odbcClose(connection)
     assign(variable.name,
            results,
-           envir = .GlobalEnv)
+           envir = .TargetEnv)
     return()
   }
   
@@ -278,7 +278,7 @@ sql.reader <- function(data.file, filename, variable.name)
     
       assign(clean.variable.name(table),
              data.parcel,
-             envir = .GlobalEnv)
+             envir = .TargetEnv)
     }
   }
   
@@ -294,7 +294,7 @@ sql.reader <- function(data.file, filename, variable.name)
       
       assign(variable.name,
              data.parcel,
-             envir = .GlobalEnv)
+             envir = .TargetEnv)
     }
     else
     {
@@ -317,7 +317,7 @@ sql.reader <- function(data.file, filename, variable.name)
     {
       assign(variable.name,
              data.parcel,
-             envir = .GlobalEnv)
+             envir = .TargetEnv)
     }
     else
     {
@@ -341,7 +341,7 @@ sql.reader <- function(data.file, filename, variable.name)
   {
     assign(variable.name,
            NULL,
-           envir = .GlobalEnv)
+           envir = .TargetEnv)
     return()
   }
 
