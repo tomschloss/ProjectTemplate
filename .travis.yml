@@ -57,3 +57,7 @@ after_error:
   - ./travis-tool.sh dump_logs
 after_failure:
   - cat ~/r-source/config.log || true
+r_github_packages:
+  - jimhester/covr
+after_success:
+  - Rscript -e 'library(covr);codecov()'
